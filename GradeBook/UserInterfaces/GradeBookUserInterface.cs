@@ -4,10 +4,17 @@ using System;
 
 namespace GradeBook.UserInterfaces
 {
+    /// <summary>
+    /// The grade book user interface.
+    /// </summary>
     public static class GradeBookUserInterface
     {
         public static BaseGradeBook GradeBook;
         public static bool Quit = false;
+        /// <summary>
+        /// Commands the loop.
+        /// </summary>
+        /// <param name="gradeBook">The grade book.</param>
         public static void CommandLoop(BaseGradeBook gradeBook)
         {
             GradeBook = gradeBook;
@@ -17,7 +24,7 @@ namespace GradeBook.UserInterfaces
             Console.WriteLine(GradeBook.Name + " : " + GradeBook.GetType().Name);
             Console.WriteLine("#=======================#");
 
-            while(!Quit)
+            while (!Quit)
             {
                 Console.WriteLine(string.Empty);
                 Console.WriteLine(">> What would you like to do?");
@@ -28,6 +35,10 @@ namespace GradeBook.UserInterfaces
             Console.WriteLine(GradeBook.Name + " has been closed.");
         }
 
+        /// <summary>
+        /// Commands the route.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public static void CommandRoute(string command)
         {
             if (command == "save")
@@ -54,12 +65,19 @@ namespace GradeBook.UserInterfaces
                 Console.WriteLine("{0} was not recognized, please try again.", command);
         }
 
+        /// <summary>
+        /// Saves the command.
+        /// </summary>
         public static void SaveCommand()
         {
             GradeBook.Save();
             Console.WriteLine("{0} has been saved.", GradeBook.Name);
         }
-        
+
+        /// <summary>
+        /// Adds the grade command.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public static void AddGradeCommand(string command)
         {
             var parts = command.Split(' ');
@@ -74,6 +92,10 @@ namespace GradeBook.UserInterfaces
             Console.WriteLine("Added a score of {0} to {1}'s grades", score, name);
         }
 
+        /// <summary>
+        /// Removes the grade command.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public static void RemoveGradeCommand(string command)
         {
             var parts = command.Split(' ');
@@ -88,6 +110,10 @@ namespace GradeBook.UserInterfaces
             Console.WriteLine("Removed a score of {0} from {1}'s grades", score, name);
         }
 
+        /// <summary>
+        /// Adds the student command.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public static void AddStudentCommand(string command)
         {
             var parts = command.Split(' ');
@@ -116,7 +142,11 @@ namespace GradeBook.UserInterfaces
             GradeBook.AddStudent(student);
             Console.WriteLine("Added {0} to the gradebook.", name);
         }
-        
+
+        /// <summary>
+        /// Removes the student command.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public static void RemoveStudentCommand(string command)
         {
             var parts = command.Split(' ');
@@ -130,16 +160,26 @@ namespace GradeBook.UserInterfaces
             Console.WriteLine("Removed {0} from the gradebook.", name);
         }
 
+        /// <summary>
+        /// Lists the command.
+        /// </summary>
         public static void ListCommand()
         {
             GradeBook.ListStudents();
         }
-        
+
+        /// <summary>
+        /// Statistics the command.
+        /// </summary>
         public static void StatisticsCommand()
         {
             GradeBook.CalculateStatistics();
         }
 
+        /// <summary>
+        /// Students the statistics command.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public static void StudentStatisticsCommand(string command)
         {
             var parts = command.Split(' ');
@@ -152,6 +192,9 @@ namespace GradeBook.UserInterfaces
             GradeBook.CalculateStudentStatistics(name);
         }
 
+        /// <summary>
+        /// Helps the command.
+        /// </summary>
         public static void HelpCommand()
         {
             Console.WriteLine();

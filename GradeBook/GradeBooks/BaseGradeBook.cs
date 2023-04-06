@@ -9,17 +9,45 @@ using Newtonsoft.Json.Linq;
 
 namespace GradeBook.GradeBooks
 {
-    public class BaseGradeBook
+    /// <summary>
+    /// The base grade book.
+    /// </summary>
+    public abstract class BaseGradeBook
     {
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether is weighted.
+        /// </summary>
+        public bool IsWeighted { get; set; }
+        /// <summary>
+        /// Gets or sets the students.
+        /// </summary>
         public List<Student> Students { get; set; }
+        /// <summary>
+        /// Gets or sets the type.
+        /// </summary>
+        public GradeBookType Type { get; set; }
 
-        public BaseGradeBook(string name)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseGradeBook"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="x">If true, x.</param>
+        public BaseGradeBook(string name, bool x)
         {
             Name = name;
+            IsWeighted = x;
             Students = new List<Student>();
+            Type = new GradeBookType();
         }
 
+        /// <summary>
+        /// Adds the student.
+        /// </summary>
+        /// <param name="student">The student.</param>
         public void AddStudent(Student student)
         {
             if (string.IsNullOrEmpty(student.Name))
@@ -27,6 +55,10 @@ namespace GradeBook.GradeBooks
             Students.Add(student);
         }
 
+        /// <summary>
+        /// Removes the student.
+        /// </summary>
+        /// <param name="name">The name.</param>
         public void RemoveStudent(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -40,6 +72,11 @@ namespace GradeBook.GradeBooks
             Students.Remove(student);
         }
 
+        /// <summary>
+        /// Adds the grade.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="score">The score.</param>
         public void AddGrade(string name, double score)
         {
             if (string.IsNullOrEmpty(name))
@@ -53,6 +90,11 @@ namespace GradeBook.GradeBooks
             student.AddGrade(score);
         }
 
+        /// <summary>
+        /// Removes the grade.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="score">The score.</param>
         public void RemoveGrade(string name, double score)
         {
             if (string.IsNullOrEmpty(name))
@@ -66,6 +108,9 @@ namespace GradeBook.GradeBooks
             student.RemoveGrade(score);
         }
 
+        /// <summary>
+        /// Lists the students.
+        /// </summary>
         public void ListStudents()
         {
             foreach (var student in Students)
@@ -74,6 +119,11 @@ namespace GradeBook.GradeBooks
             }
         }
 
+        /// <summary>
+        /// Loads the.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>A BaseGradeBook.</returns>
         public static BaseGradeBook Load(string name)
         {
             if (!File.Exists(name + ".gdbk"))
@@ -92,6 +142,9 @@ namespace GradeBook.GradeBooks
             }
         }
 
+        /// <summary>
+        /// Saves the.
+        /// </summary>
         public void Save()
         {
             using (var file = new FileStream(Name + ".gdbk", FileMode.Create, FileAccess.Write))
@@ -104,24 +157,52 @@ namespace GradeBook.GradeBooks
             }
         }
 
+        /// <summary>
+        /// Gets the g p a.
+        /// </summary>
+        /// <param name="letterGrade">The letter grade.</param>
+        /// <param name="studentType">The student type.</param>
+        /// <returns>A double.</returns>
         public virtual double GetGPA(char letterGrade, StudentType studentType)
         {
-            switch (letterGrade)
+            if (studentType == StudentType.Honors || studentType == StudentType.DualEnrolled)
             {
-                case 'A':
-                    return 4;
-                case 'B':
-                    return 3;
-                case 'C':
-                    return 2;
-                case 'D':
-                    return 1;
-                case 'F':
-                    return 0;
+                switch (letterGrade)
+                {
+                    case 'A':
+                        return 4;
+                    case 'B':
+                        return 3;
+                    case 'C':
+                        return 2;
+                    case 'D':
+                        return 1;
+                    case 'F':
+                        return 0;
+                }
+            }
+            else
+            {
+                switch (letterGrade)
+                {
+                    case 'A':
+                        return 4;
+                    case 'B':
+                        return 3;
+                    case 'C':
+                        return 2;
+                    case 'D':
+                        return 1;
+                    case 'F':
+                        return 0;
+                }
             }
             return 0;
         }
 
+        /// <summary>
+        /// Calculates the statistics.
+        /// </summary>
         public virtual void CalculateStatistics()
         {
             var allStudentsPoints = 0d;
@@ -189,6 +270,10 @@ namespace GradeBook.GradeBooks
                 Console.WriteLine("Average for only dual enrolled students is " + (dualEnrolledPoints / Students.Where(e => e.Type == StudentType.DualEnrolled).Count()));
         }
 
+        /// <summary>
+        /// Calculates the student statistics.
+        /// </summary>
+        /// <param name="name">The name.</param>
         public virtual void CalculateStudentStatistics(string name)
         {
             var student = Students.FirstOrDefault(e => e.Name == name);
@@ -204,6 +289,11 @@ namespace GradeBook.GradeBooks
             }
         }
 
+        /// <summary>
+        /// Gets the letter grade.
+        /// </summary>
+        /// <param name="averageGrade">The average grade.</param>
+        /// <returns>A char.</returns>
         public virtual char GetLetterGrade(double averageGrade)
         {
             if (averageGrade >= 90)
@@ -263,7 +353,7 @@ namespace GradeBook.GradeBooks
                              from type in assembly.GetTypes()
                              where type.FullName == "GradeBook.GradeBooks.StandardGradeBook"
                              select type).FirstOrDefault();
-            
+
             return JsonConvert.DeserializeObject(json, gradebook);
         }
     }
